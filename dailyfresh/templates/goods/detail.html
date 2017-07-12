@@ -3,22 +3,42 @@
 	<script type="text/javascript">
 		$(function () {
 			$('#add_cart').click(function(){
-			    var $add_x = $('#add_cart').offset().top;
-				var $add_y = $('#add_cart').offset().left;
+			    var gid = $('#h').val()
+				var count = $('.num_show').val()
+			    $.get('/ttsx/islogin/', function (data) {
+					if(data.is_login){
+					    $.get('/cart/add/', {'gid': gid, 'count': count}, function (data) {
+							if(data.isadd){
+								var $add_x = $('#add_cart').offset().top;
+								var $add_y = $('#add_cart').offset().left;
 
-				var $to_x = $('#show_count').offset().top;
-				var $to_y = $('#show_count').offset().left;
-				$(".add_jump").css({'left':$add_y+80,'top':$add_x+10,'display':'block'})
+								var $to_x = $('#show_count').offset().top;
+								var $to_y = $('#show_count').offset().left;
+								$(".add_jump").css({'left':$add_y+80,'top':$add_x+10,'display':'block'})
 
-				$(".add_jump").stop().animate({
-					'left': $to_y+7,
-					'top': $to_x+7},
-					"fast", function() {
-						$(".add_jump").fadeOut('fast',function(){
-							$('#show_count').html(2);
-						});
+								$(".add_jump").stop().animate({
+									'left': $to_y+7,
+									'top': $to_x+7},
+									"fast", function() {
+										$(".add_jump").fadeOut('fast',function(){
+										    $.get('/cart/count/', function (data) {
+												$('#show_count').html(data.count);
+                                            });
 
-			});
+										});
+
+								});
+							}
+							else {
+							    alert('加入失败');
+							}
+                        });
+					}
+					else{
+					    location.href = '/ttsx/login/'
+					}
+                });
+
 		});
 			$('.num_show').blur(function () {
 			    kucun =parseInt($('#kucun').val());
@@ -75,6 +95,7 @@
 			<div class="goods_num clearfix">
 				<div class="num_name fl">数 量：</div>
 				<div class="num_add fl">
+					<input type="hidden" id="h" value="{{goods.id}}">
 					<input type="text" class="num_show fl" value="1">
 					<input type="hidden" id="kucun" value="{{goods.gkucun}}">
 					<a href="javascript:;" class="add fr">+</a>

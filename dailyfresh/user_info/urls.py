@@ -10,4 +10,5 @@ urlpatterns=[
     url(r'^login_handle/$', views.login_handle),
     url(r'^register_vaild/$', views.register_vaild),
     url(r'^out/$', views.out),
+    url(r'^islogin', views.islogin),
 ]

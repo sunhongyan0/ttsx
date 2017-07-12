@@ -4,7 +4,7 @@ from .models import *
 from hashlib import sha1
 import datetime
 from .user_login import login_au
-# Create your views here.
+from goods.models import GoodsInfo
 
 
 def login(request):
@@ -83,7 +83,12 @@ def register_vaild(request):
 @login_au
 def user_center_info(request):
     user = ttsx_info.objects.get(pk=request.session['uid'])
-    context = {'title': '用户中心', 'user': user, 'show': '1'}
+    goods_ids = request.COOKIES.get('goods_ids', '').split(',')
+    goods_ids.pop()
+    glist = []
+    for gid in goods_ids:
+        glist.append(GoodsInfo.objects.get(id=gid))
+    context = {'title': '用户中心', 'user': user, 'show': '1', 'glist': glist}
     return render(request, 'dailyfresh/user_center_info.html', context)
 
 
@@ -107,7 +112,11 @@ def site(request):
     return render(request, 'dailyfresh/user_center_site.html', context)
 
 
-
+def islogin(request):
+    is_login = 0
+    if request.session.has_key('uid'):
+        is_login = 1
+    return JsonResponse({'is_login': is_login})
 
 
 
